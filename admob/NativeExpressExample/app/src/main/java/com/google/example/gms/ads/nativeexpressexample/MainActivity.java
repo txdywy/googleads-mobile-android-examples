@@ -30,6 +30,7 @@ import com.google.android.gms.ads.VideoOptions;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,28 +55,34 @@ public class MainActivity extends AppCompatActivity {
     NativeExpressAdView mAdView;
     VideoController mVideoController;
     OkHttpClient httpClient = new OkHttpClient();
-    Thread thread = new Thread() {
-        @Override
-        public void run() {
-            try {
-                Random r = new Random();
-                int index = r.nextInt(30);
-                final String a = get_news(index);
-                Log.d("hahaha", a);
-                final TextView textViewToChange = (TextView) findViewById(R.id.news);
-                MainActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.d("hahaha", "code: ");
-                        textViewToChange.setText(a);
-                    }
-                });
 
-            } catch (IOException e) {
-                Log.d("hahaha", "Just a nap...");
+    private void refresh() {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Random r = new Random();
+                    int index = r.nextInt(30);
+                    final String a = get_news(index);
+                    Log.d("hahaha", a);
+                    final TextView textViewToChange = (TextView) findViewById(R.id.news);
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d("hahaha", "code: ");
+                            textViewToChange.setText(a);
+                        }
+                    });
+
+                } catch (IOException e) {
+                    Log.d("hahaha", "Just a nap...");
+                }
             }
-        }
-    };
+        };
+        Toast.makeText(this, "1+ news fetching!",
+                Toast.LENGTH_LONG).show();
+        thread.start();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,13 +129,13 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        thread.start();
+        refresh();
 
         Button button = (Button) findViewById(R.id.refresh);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Do something in response to button click
-                thread.start();
+                refresh();
             }
         });
 

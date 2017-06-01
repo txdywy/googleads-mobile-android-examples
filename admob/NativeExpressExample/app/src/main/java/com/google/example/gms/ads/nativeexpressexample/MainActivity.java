@@ -27,6 +27,23 @@ import com.google.android.gms.ads.VideoController;
 import com.google.android.gms.ads.VideoOptions;
 
 
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Random;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+
 /**
  * A simple activity showing the use of a {@link NativeExpressAdView}.
  */
@@ -36,11 +53,35 @@ public class MainActivity extends AppCompatActivity {
 
     NativeExpressAdView mAdView;
     VideoController mVideoController;
+    OkHttpClient httpClient = new OkHttpClient();
+    Thread thread = new Thread() {
+        @Override
+        public void run() {
+            try {
+                Random r = new Random();
+                int index = r.nextInt(30);
+                final String a = get_news(index);
+                Log.d("hahaha", a);
+                final TextView textViewToChange = (TextView) findViewById(R.id.news);
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d("hahaha", "code: ");
+                        textViewToChange.setText(a);
+                    }
+                });
+
+            } catch (IOException e) {
+                Log.d("hahaha", "Just a nap...");
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         // Locate the NativeExpressAdView.
         mAdView = (NativeExpressAdView) findViewById(R.id.adView);
@@ -76,5 +117,64 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mAdView.loadAd(new AdRequest.Builder().build());
+
+
+
+
+
+        thread.start();
+
+        Button button = (Button) findViewById(R.id.refresh);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Do something in response to button click
+                thread.start();
+            }
+        });
+
+
+    }
+
+    protected String get_news(int index) throws IOException{
+        Request request = new Request.Builder()
+                .url("https://hacker-news.firebaseio.com/v0/topstories.json")
+                .build();
+        Response response = httpClient.newCall(request).execute();
+        String jsonData = response.body().string();
+        Log.i("hahaha", "1" + jsonData);
+        ArrayList<String> listdata = new ArrayList<String>();
+        try {
+            JSONArray jArray = new JSONArray(jsonData);
+            Log.i("hahaha", "2.5" +jArray);
+            if (jArray != null) {
+                for (int i = 0; i < jArray.length(); i++) {
+                    listdata.add(jArray.getString(i));
+                }
+            }
+        } catch (JSONException je) {
+            Log.i("hahaha", "2" + je.getLocalizedMessage());
+        }
+        Log.i("hahaha", "3" + listdata);
+        final String id = listdata.get(index);
+
+
+        request = new Request.Builder()
+                .url("https://hacker-news.firebaseio.com/v0/item/"+id+".json")
+                .build();
+        response = httpClient.newCall(request).execute();
+        jsonData = response.body().string();
+        Log.i("hahaha", "1" + jsonData);
+        try {
+            JSONObject jObject = new JSONObject(jsonData);
+            Log.i("hahaha", "2.5" +jObject);
+            if (jObject != null) {
+                String a = jObject.getString("title");
+                return a;
+            }
+        } catch (JSONException je) {
+            Log.i("hahaha", "2" + je.getLocalizedMessage());
+
+        }
+        return "err...";
     }
 }

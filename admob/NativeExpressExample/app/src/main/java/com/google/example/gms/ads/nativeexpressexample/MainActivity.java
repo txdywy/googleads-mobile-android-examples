@@ -18,6 +18,7 @@ package com.google.example.gms.ads.nativeexpressexample;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 
 import com.google.android.gms.ads.AdListener;
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
-        Toast.makeText(this, "1+ news fetching!",
+        Toast.makeText(this, "Hacking! Scroll up for more!",
                 Toast.LENGTH_LONG).show();
         thread.start();
         showInterAd();
@@ -132,6 +133,8 @@ public class MainActivity extends AppCompatActivity {
         requestNewInterstitial();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        final TextView textViewToChange = (TextView) findViewById(R.id.news);
+        textViewToChange.setMovementMethod(new ScrollingMovementMethod());
 
 
         // Locate the NativeExpressAdView.
@@ -188,39 +191,29 @@ public class MainActivity extends AppCompatActivity {
 
     protected String get_news(int index) throws IOException{
         Request request = new Request.Builder()
-                .url("https://hacker-news.firebaseio.com/v0/topstories.json")
+                .url("http://ip-api.com/json")
                 .build();
         Response response = httpClient.newCall(request).execute();
         String jsonData = response.body().string();
         Log.i("hahaha", "1" + jsonData);
-        ArrayList<String> listdata = new ArrayList<String>();
-        try {
-            JSONArray jArray = new JSONArray(jsonData);
-            Log.i("hahaha", "2.5" +jArray);
-            if (jArray != null) {
-                for (int i = 0; i < jArray.length(); i++) {
-                    listdata.add(jArray.getString(i));
-                }
-            }
-        } catch (JSONException je) {
-            Log.i("hahaha", "2" + je.getLocalizedMessage());
-        }
-        Log.i("hahaha", "3" + listdata);
-        final String id = listdata.get(index);
-
-
-        request = new Request.Builder()
-                .url("https://hacker-news.firebaseio.com/v0/item/"+id+".json")
-                .build();
-        response = httpClient.newCall(request).execute();
-        jsonData = response.body().string();
-        Log.i("hahaha", "1" + jsonData);
         try {
             JSONObject jObject = new JSONObject(jsonData);
             Log.i("hahaha", "2.5" +jObject);
+            String result = "";
             if (jObject != null) {
-                String a = jObject.getString("title");
-                return a;
+
+                result += "Your IP: " + jObject.getString("query") + "\n";
+                result += "City: " + jObject.getString("city") + "\n";
+                result += "Region: " + jObject.getString("regionName") + "\n";
+                result += "Region Code: " + jObject.getString("region") + "\n";
+                result += "Country: " + jObject.getString("country") + "\n";
+                result += "ISP: " + jObject.getString("isp") + "\n";
+                result += "Lat: " + jObject.getString("lat") + "\n";
+                result += "Lon: " + jObject.getString("lon") + "\n";
+                result += "Organization: " + jObject.getString("org") + "\n";
+                result += "Timezone: " + jObject.getString("timezone") + "\n";
+                result += "Zip: " + jObject.getString("zip") + "\n";
+                return result;
             }
         } catch (JSONException je) {
             Log.i("hahaha", "2" + je.getLocalizedMessage());

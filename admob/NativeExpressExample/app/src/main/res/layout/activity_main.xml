@@ -16,7 +16,9 @@
         android:layout_height="wrap_content"
         android:text="Loading..."
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:maxLines = "6"
+        android:scrollbars = "vertical"/>
 
     <com.google.android.gms.ads.NativeExpressAdView
         android:id="@+id/adView"
@@ -36,6 +38,6 @@
         android:layout_alignLeft="@+id/adView"
         android:layout_alignRight="@+id/adView"
         android:layout_alignStart="@+id/adView"
-        android:text="1+ News"
+        android:text="Refresh IP Info!"
         android:textSize="30sp" />
 </RelativeLayout>

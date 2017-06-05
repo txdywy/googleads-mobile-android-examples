@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "214637553845",
-    "firebase_url": "https://tech-1-7c45b.firebaseio.com",
-    "project_id": "tech-1-7c45b",
-    "storage_bucket": "tech-1-7c45b.appspot.com"
+    "project_number": "571238581837",
+    "firebase_url": "https://android-ip.firebaseio.com",
+    "project_id": "android-ip",
+    "storage_bucket": "android-ip.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:214637553845:android:cc61093ee9768b72",
+        "mobilesdk_app_id": "1:571238581837:android:8df2c1e8ce971342",
         "android_client_info": {
-          "package_name": "com.ylab.news"
+          "package_name": "com.ylab.ip"
         }
       },
       "oauth_client": [
         {
-          "client_id": "214637553845-g2d41ft96kkuejc52kanp8ga92v5uuu8.apps.googleusercontent.com",
+          "client_id": "571238581837-49s4g02oahdlef7mobp5s9tdgp8qt333.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAJ4UhPTddnWYVRXRMAG4IKWQWf670LxUA"
+          "current_key": "AIzaSyCBNxnrNdXtfPUzVY_gLgj2dnis3Bo8NmQ"
         }
       ],
       "services": {

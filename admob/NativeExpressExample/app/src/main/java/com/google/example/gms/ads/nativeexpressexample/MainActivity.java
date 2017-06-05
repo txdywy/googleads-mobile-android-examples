@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         this.AdInterTs = System.currentTimeMillis();
         this.counter = 0;
         mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId("ca-app-pub-8217481143192443/2476561014");
+        mInterstitialAd.setAdUnitId("ca-app-pub-8217481143192443/7924005419");
 
         mInterstitialAd.setAdListener(new AdListener() {
             @Override

@@ -38,6 +38,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -93,7 +94,8 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Random r = new Random();
                     int index = r.nextInt(30);
-                    final String a = get_news(index);
+                    final String cpuRate = "CPU busy rate: " + readCPUusage() + "%\n";
+                    final String a = cpuRate + get_news(index);
                     Log.d("hahaha", a);
                     final TextView textViewToChange = (TextView) findViewById(R.id.news);
                     MainActivity.this.runOnUiThread(new Runnable() {
@@ -101,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
                         public void run() {
                             Log.d("hahaha", "code: ");
                             textViewToChange.setText(a);
+                            Log.d("hahaha", cpuRate);
                         }
                     });
 
@@ -114,6 +117,57 @@ public class MainActivity extends AppCompatActivity {
         thread.start();
         showInterAd();
     }
+
+    private float readCPUusage() {
+
+        try {
+
+            RandomAccessFile reader = new RandomAccessFile("/proc/stat", "r");
+
+            String load = reader.readLine();
+
+            String[] toks = load.split(" ");
+
+            long idle1 = Long.parseLong(toks[5]);
+
+            long cpu1 = Long.parseLong(toks[2]) + Long.parseLong(toks[3])
+
+                    + Long.parseLong(toks[4]) + Long.parseLong(toks[6]) + Long.parseLong(toks[7]) + Long.parseLong(toks[8]);
+
+            try {
+
+                Thread.sleep(360);
+
+            } catch (Exception e) {
+
+            }
+
+
+            reader.seek(0);
+
+            load = reader.readLine();
+
+            reader.close();
+
+            toks = load.split(" ");
+
+            long idle2 = Long.parseLong(toks[5]);
+
+            long cpu2 = Long.parseLong(toks[2]) + Long.parseLong(toks[3]) + Long.parseLong(toks[4]) + Long.parseLong(toks[6])
+
+                    + Long.parseLong(toks[7]) + Long.parseLong(toks[8]);
+
+            return (float) (cpu2 - cpu1) / ((cpu2 + idle2) - (cpu1 + idle1));
+
+        } catch (IOException ex) {
+
+            ex.printStackTrace();
+
+        }
+
+        return 0;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

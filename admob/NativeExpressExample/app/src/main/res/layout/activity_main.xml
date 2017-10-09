@@ -17,17 +17,8 @@
         android:text="Loading..."
         android:textSize="18sp"
         android:textStyle="bold"
-        android:maxLines = "6"
+        android:maxLines = "8"
         android:scrollbars = "vertical"/>
-
-    <com.google.android.gms.ads.NativeExpressAdView
-        android:id="@+id/adView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        ads:adSize="320x300"
-        ads:adUnitId="@string/ad_unit_id"></com.google.android.gms.ads.NativeExpressAdView>
 
     <Button
         android:id="@+id/refresh"
@@ -40,4 +31,15 @@
         android:layout_alignStart="@+id/adView"
         android:text="Refresh IP Info!"
         android:textSize="30sp" />
+
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        ads:adSize="MEDIUM_RECTANGLE"
+        ads:adUnitId="ca-app-pub-8217481143192443/9348059688">
+    </com.google.android.gms.ads.AdView>
 </RelativeLayout>

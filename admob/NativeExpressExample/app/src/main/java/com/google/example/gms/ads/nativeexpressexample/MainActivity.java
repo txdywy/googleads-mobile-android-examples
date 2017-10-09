@@ -16,6 +16,8 @@
 
 package com.google.example.gms.ads.nativeexpressexample;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
@@ -95,7 +97,9 @@ public class MainActivity extends AppCompatActivity {
                     Random r = new Random();
                     int index = r.nextInt(30);
                     final String cpuRate = "CPU busy rate: " + readCPUusage() + "%\n";
-                    final String a = cpuRate + get_news(index);
+                    final String memRate = "Free Memory: " + getFreeMemorySize() + "\n";
+                    final String a = cpuRate + memRate + get_news(index);
+
                     Log.d("hahaha", a);
                     final TextView textViewToChange = (TextView) findViewById(R.id.news);
                     MainActivity.this.runOnUiThread(new Runnable() {
@@ -166,6 +170,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return 0;
+    }
+
+    public String getFreeMemorySize() {
+        ActivityManager.MemoryInfo outInfo = new ActivityManager.MemoryInfo();
+        ActivityManager am = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
+        am.getMemoryInfo(outInfo);
+        long avaliMem = outInfo.availMem;
+        return (avaliMem / 1024 /1024) + "MB";
     }
 
 

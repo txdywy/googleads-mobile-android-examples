@@ -14,11 +14,13 @@
         android:id="@+id/news"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="?attr/colorControlHighlight"
+        android:maxLines="8"
+        android:scrollbars="vertical"
         android:text="Loading..."
+        android:textColorLink="?android:attr/windowBackgroundFallback"
         android:textSize="18sp"
-        android:textStyle="bold"
-        android:maxLines = "8"
-        android:scrollbars = "vertical"/>
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/refresh"

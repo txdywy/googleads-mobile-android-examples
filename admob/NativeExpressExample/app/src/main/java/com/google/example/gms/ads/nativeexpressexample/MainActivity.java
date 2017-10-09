@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
         ActivityManager am = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
         am.getMemoryInfo(outInfo);
         long avaliMem = outInfo.availMem;
-        return (avaliMem / 1024 /1024) + "MB";
+        return (avaliMem / 1024 / 1024) + "MB";
     }
 
 

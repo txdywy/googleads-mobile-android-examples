@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Random r = new Random();
                     int index = r.nextInt(30);
-                    final String cpuRate = "CPU busy rate: " + readCPUusage() + "%\n";
+                    final String cpuRate = "CPU busy rate: " + readCPUusage() * 100 + "%\n";
                     final String memRate = "Free Memory: " + getFreeMemorySize() + "\n";
                     final String a = cpuRate + memRate + get_news(index);
 

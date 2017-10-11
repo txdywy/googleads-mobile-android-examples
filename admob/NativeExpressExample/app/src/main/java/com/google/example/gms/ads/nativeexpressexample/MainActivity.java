@@ -17,9 +17,17 @@
 package com.google.example.gms.ads.nativeexpressexample;
 
 import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Build;
+import android.os.*;
 import android.support.v7.app.AppCompatActivity;
+import android.text.format.Formatter;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 
@@ -39,14 +47,22 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+
+
+
 
 
 /**
@@ -58,8 +74,19 @@ public class MainActivity extends AppCompatActivity {
     private InterstitialAd mInterstitialAd;
     private long AdInterTs;
     private int counter;
+    private int batLevel;
+    private CPUManager cpuManager = new CPUManager(1);
 
     private AdView mAdView;
+
+    private BroadcastReceiver batteryReceiver = new BroadcastReceiver(){
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            batLevel = intent.getIntExtra("level", 0);
+            //	level加%就是当前电量了
+        }
+    };
+
 
     OkHttpClient httpClient = new OkHttpClient();
 
@@ -98,9 +125,38 @@ public class MainActivity extends AppCompatActivity {
                     int index = r.nextInt(30);
                     final String cpuRate = "CPU busy rate: " + readCPUusage() * 100 + "%\n";
                     final String memRate = "Free Memory: " + getFreeMemorySize() + "\n";
+                    final String[] versions = getVersion();
+                    final String[] cpuInfos = getCpuInfo();
+                    final long[] romMems = getRomMemroy();
+                    final long iMem = getTotalInternalMemorySize();
+                    long[] sdCard = getSDCardMemory();
+                    String[] wifiInfo = getOtherInfo();
+                    String startTime = getTimes();
+
+
+                    Log.d("hahaha", "Versions: " + Arrays.toString(versions));
+                    Log.d("hahaha", "CPUs: " + Arrays.toString(cpuInfos));
+                    Log.d("hahaha", "ROMs: " + Arrays.toString(romMems));
+                    Log.d("hahaha", "iMem: " + iMem);
+                    Log.d("hahaha", "sdCard: " + Arrays.toString(sdCard));
+                    Log.d("hahaha", "battery: " + batLevel + "%");
+                    Log.d("hahaha", "wifi: " + Arrays.toString(wifiInfo));
+                    Log.d("hahaha", "boot: " + startTime);
+                    Log.d("hahaha", "cpu cores: " + cpuManager.getMaxCpuFreq() + "Ghz, "
+                                                  + cpuManager.getMinCpuFreq() + "Ghz, "
+                                                  + cpuManager.getCurCpuFreq() + "Ghz, "
+                                                  + cpuManager.getCpuName() + ", "
+                                                  + cpuManager.getNumCores() + " cores,"
+                                                  + cpuManager.getUsage() + "%, "
+                    );
+
+
+
                     final String a = cpuRate + memRate + get_news(index);
 
-                    Log.d("hahaha", a);
+                    //getTotalMemory();
+
+                    //Log.d("hahaha", a);
                     final TextView textViewToChange = (TextView) findViewById(R.id.news);
                     MainActivity.this.runOnUiThread(new Runnable() {
                         @Override
@@ -120,6 +176,99 @@ public class MainActivity extends AppCompatActivity {
                 Toast.LENGTH_LONG).show();
         thread.start();
         showInterAd();
+    }
+
+    public String[] getOtherInfo(){
+        String[] other={"null","null","null","null","null","null","null"};
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        if(wifiInfo.getMacAddress()!=null){
+            other[0]=wifiInfo.getMacAddress();
+        } else {
+            other[0] = "Fail";
+        }
+        other[1] = getTimes();
+        other[2] = wifiInfo.getSSID();
+        other[3] = Formatter.formatIpAddress(wifiInfo.getIpAddress());
+        other[4] = wifiInfo.getBSSID();
+        //other[5] = wifiInfo.getFrequency() + "Hz";
+        other[5] = wifiInfo.getLinkSpeed() + "";
+        other[6] = wifiInfo.getNetworkId() +"";
+        return other;
+    }
+
+    private String getTimes() {
+        long ut = SystemClock.elapsedRealtime() / 1000;
+        if (ut == 0) {
+            ut = 1;
+        }
+        int m = (int) ((ut / 60) % 60);
+        int h = (int) ((ut / 3600));
+        return h + "h:" + m + "m";
+    }
+
+
+    public long[] getSDCardMemory() {
+        long[] sdCardInfo=new long[2];
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            File sdcardDir = Environment.getExternalStorageDirectory();
+            StatFs sf = new StatFs(sdcardDir.getPath());
+            long bSize = sf.getBlockSize();
+            long bCount = sf.getBlockCount();
+            long availBlocks = sf.getAvailableBlocks();
+
+            sdCardInfo[0] = bSize * bCount;//总大小
+            sdCardInfo[1] = bSize * availBlocks;//可用大小
+        }
+        return sdCardInfo;
+    }
+
+
+    private long[] getRomMemroy() {
+        long[] romInfo = new long[2];
+        //Total rom memory
+        romInfo[0] = getTotalInternalMemorySize();
+
+        //Available rom memory
+        File path = Environment.getDataDirectory();
+        StatFs stat = new StatFs(path.getPath());
+        long blockSize = stat.getBlockSize();
+        long availableBlocks = stat.getAvailableBlocks();
+        romInfo[1] = blockSize * availableBlocks;
+        getVersion();
+        return romInfo;
+    }
+
+    private long getTotalInternalMemorySize() {
+        File path = Environment.getDataDirectory();
+        StatFs stat = new StatFs(path.getPath());
+        long blockSize = stat.getBlockSize();
+        long totalBlocks = stat.getBlockCount();
+        return totalBlocks * blockSize;
+    }
+
+
+    private String[] getCpuInfo() {
+        String str1 = "/proc/cpuinfo";
+        String str2="";
+        String[] cpuInfo={"",""};
+        String[] arrayOfString;
+        try {
+            FileReader fr = new FileReader(str1);
+            BufferedReader localBufferedReader = new BufferedReader(fr, 8192);
+            str2 = localBufferedReader.readLine();
+            arrayOfString = str2.split("\\s+");
+            for (int i = 2; i < arrayOfString.length; i++) {
+                cpuInfo[0] = cpuInfo[0] + arrayOfString[i] + " ";
+            }
+            str2 = localBufferedReader.readLine();
+            arrayOfString = str2.split("\\s+");
+            cpuInfo[1] += arrayOfString[2];
+            localBufferedReader.close();
+        } catch (IOException e) {
+        }
+        return cpuInfo;
     }
 
     private float readCPUusage() {
@@ -172,13 +321,50 @@ public class MainActivity extends AppCompatActivity {
         return 0;
     }
 
-    public String getFreeMemorySize() {
+    private String[] getVersion(){
+        String[] version={"null","null","null","null"};
+        String str1 = "/proc/version";
+        String str2;
+        String[] arrayOfString;
+        try {
+            FileReader localFileReader = new FileReader(str1);
+            BufferedReader localBufferedReader = new BufferedReader(
+                    localFileReader, 8192);
+            str2 = localBufferedReader.readLine();
+            arrayOfString = str2.split("\\s+");
+            version[0]=arrayOfString[2];//KernelVersion
+            localBufferedReader.close();
+        } catch (IOException e) {
+        }
+        version[1] = Build.VERSION.RELEASE;// firmware version
+        version[2]=Build.MODEL;//model
+        version[3]=Build.DISPLAY;//system version
+        return version;
+    }
+
+    private String getFreeMemorySize() {
         ActivityManager.MemoryInfo outInfo = new ActivityManager.MemoryInfo();
         ActivityManager am = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
         am.getMemoryInfo(outInfo);
         long avaliMem = outInfo.availMem;
-        return (avaliMem / 1024 / 1024) + "MB";
+        long totalMem = outInfo.totalMem;
+
+        return (avaliMem / 1024 / 1024) + "MB/" + (totalMem / 1024 / 1024) + "MB";
     }
+
+    private void getTotalMemory() {
+        String str1 = "/proc/meminfo";
+        String str2="";
+        try {
+            FileReader fr = new FileReader(str1);
+            BufferedReader localBufferedReader = new BufferedReader(fr, 8192);
+            while ((str2 = localBufferedReader.readLine()) != null) {
+                Log.d("hahaha", "---" + str2);
+            }
+        } catch (IOException e) {
+        }
+    }
+
 
 
     @Override
@@ -198,6 +384,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         requestNewInterstitial();
+
+        registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
 
 

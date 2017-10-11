@@ -21,6 +21,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -52,6 +53,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -60,9 +63,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-
-
-
+import static android.R.attr.button;
 
 
 /**
@@ -71,6 +72,9 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
 
     private static String LOG_TAG = "EXAMPLE";
+    private static int index = 0;
+    private static String[] btText= {"HACKING CPU", "HACKING DEVICE", "HACKING WIFI", "HACKING IP"};
+    private static int[] cs = {Color.BLUE, Color.CYAN, Color.GRAY, Color.GREEN, Color.MAGENTA, Color.YELLOW, Color.RED};
     private InterstitialAd mInterstitialAd;
     private long AdInterTs;
     private int counter;
@@ -115,14 +119,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void refresh() {
+    private void refresh(final int index) {
         this.counter++;
         Thread thread = new Thread() {
             @Override
             public void run() {
                 try {
-                    Random r = new Random();
-                    int index = r.nextInt(30);
+
                     final String cpuRate = "CPU busy rate: " + readCPUusage() * 100 + "%\n";
                     final String memRate = "Free Memory: " + getFreeMemorySize() + "\n";
                     final String[] versions = getVersion();
@@ -149,10 +152,45 @@ public class MainActivity extends AppCompatActivity {
                                                   + cpuManager.getNumCores() + " cores,"
                                                   + cpuManager.getUsage() + "%, "
                     );
+                    Log.d("hahaha", "SD new: " + getSDAvailableSize() + "/" + getSDTotalSize());
+                    Log.d("hahaha", "ROM new: " + getRomAvailableSize() + "/" + getRomTotalSize());
+                    //Log.d("hahaha", "mac new: " + getMacAddress());
+
+
+                    String tmp = "";
+                    if (index == 0) {
+                        tmp = getIpInfo();
+                    }
+                    else if (index == 1){
+                        tmp = "CPU : " + cpuManager.getCpuName() + "\n" +
+                              "CPU Cores: " + cpuManager.getNumCores() + "\n" +
+                                cpuRate +
+                              "Current CPU Frequency: " + cpuManager.getCurCpuFreq() + "GHz\n" +
+                              "Max CPU Frequency: "+ cpuManager.getMaxCpuFreq() + "GHz\n" +
+                              "Min CPU Frequency: "+ cpuManager.getMinCpuFreq() + "GHz\n";
+                    }
+                    else if (index == 2){
+                        tmp = "Android Version: " + versions[1] + "\n" +
+                                "Device Type: " + versions[2] + "\n" +
+                                "Memory: " + getFreeMemorySize() + "\n" +
+                                "Storage: " + getRomAvailableSize() + "/" + getRomTotalSize() + "\n" +
+                                "Battery: " + batLevel + "%\n" +
+                                "Running time: " + startTime;
+
+
+                    }
+                    else if (index == 3){
+                        tmp = "WIFI IP: " + wifiInfo[3] + "\n" +
+                                "WIFI NAME: " + wifiInfo[2] + "\n" +
+                                "MAC Address: " + wifiInfo[0] ;
+                    }
+                    else{
+                        tmp = cpuRate + memRate + getIpInfo();
+                    }
+                    final String textResult = tmp;
 
 
 
-                    final String a = cpuRate + memRate + get_news(index);
 
                     //getTotalMemory();
 
@@ -162,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             Log.d("hahaha", "code: ");
-                            textViewToChange.setText(a);
+                            textViewToChange.setText(textResult);
                             Log.d("hahaha", cpuRate);
                         }
                     });
@@ -176,6 +214,44 @@ public class MainActivity extends AppCompatActivity {
                 Toast.LENGTH_LONG).show();
         thread.start();
         showInterAd();
+    }
+
+
+    private String getRomTotalSize() {
+        File path = Environment.getDataDirectory();
+        StatFs stat = new StatFs(path.getPath());
+        long blockSize = stat.getBlockSize();
+        long totalBlocks = stat.getBlockCount();
+        return Formatter.formatFileSize(MainActivity.this, blockSize * totalBlocks);
+    }
+
+    /**
+     * 获得机身可用内存
+     *
+     * @return
+     */
+    private String getRomAvailableSize() {
+        File path = Environment.getDataDirectory();
+        StatFs stat = new StatFs(path.getPath());
+        long blockSize = stat.getBlockSize();
+        long availableBlocks = stat.getAvailableBlocks();
+        return Formatter.formatFileSize(MainActivity.this, blockSize * availableBlocks);
+    }
+
+    private String getSDAvailableSize() {
+        File path = Environment.getExternalStorageDirectory();
+        StatFs stat = new StatFs(path.getPath());
+        long blockSize = stat.getBlockSize();
+        long availableBlocks = stat.getAvailableBlocks();
+        return Formatter.formatFileSize(MainActivity.this, blockSize * availableBlocks);
+    }
+
+    private String getSDTotalSize() {
+        File path = Environment.getExternalStorageDirectory();
+        StatFs stat = new StatFs(path.getPath());
+        long blockSize = stat.getBlockSize();
+        long totalBlocks = stat.getBlockCount();
+        return Formatter.formatFileSize(MainActivity.this, blockSize * totalBlocks);
     }
 
     public String[] getOtherInfo(){
@@ -401,20 +477,24 @@ public class MainActivity extends AppCompatActivity {
         textViewToChange.setMovementMethod(new ScrollingMovementMethod());
 
 
-        refresh();
+        refresh(index);
 
-        Button button = (Button) findViewById(R.id.refresh);
+        final Button button = (Button) findViewById(R.id.refresh);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Do something in response to button click
-                refresh();
+                int rnd = new Random().nextInt(cs.length);
+                index = (index + 1) % btText.length;
+                refresh(index);
+                button.setText(btText[index]);
+                button.setBackgroundColor(cs[rnd]);
             }
         });
 
 
     }
 
-    protected String get_news(int index) throws IOException{
+    protected String getIpInfo() throws IOException{
         Request request = new Request.Builder()
                 .url("http://ip-api.com/json")
                 .build();

@@ -450,7 +450,7 @@ public class MainActivity extends AppCompatActivity {
         this.AdInterTs = System.currentTimeMillis();
         this.counter = 0;
         mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId("ca-app-pub-8217481143192443/7924005419");
+        mInterstitialAd.setAdUnitId("ca-app-pub-1461460404188784/8383516666");
 
         mInterstitialAd.setAdListener(new AdListener() {
             @Override

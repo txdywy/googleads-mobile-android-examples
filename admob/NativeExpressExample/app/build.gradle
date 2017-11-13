@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "com.ylab.ip"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 14
-        versionName "1.4"
+        versionCode 15
+        versionName "1.5"
     }
     buildTypes {
         release {

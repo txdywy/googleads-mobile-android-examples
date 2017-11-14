@@ -36,7 +36,7 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
-
+import com.google.android.gms.ads.MobileAds;
 
 
 import android.view.View;
@@ -446,11 +446,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
+        MobileAds.initialize(this, "ca-app-pub-1461460404188784~4808794234");
         this.AdInterTs = System.currentTimeMillis();
         this.counter = 0;
         mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId("ca-app-pub-1461460404188784/8383516666");
+        mInterstitialAd.setAdUnitId("ca-app-pub-1461460404188784/3224249823");
 
         mInterstitialAd.setAdListener(new AdListener() {
             @Override

@@ -14,8 +14,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -239,7 +241,7 @@ public class CPUManager {
             e.printStackTrace();
         }
         DecimalFormat df = new java.text.DecimalFormat("#.00");
-        usage = Double.parseDouble(df.format(usage));
+        usage = Double.parseDouble(df.format(usage).replaceAll(",","."));
         return usage;
     }
 

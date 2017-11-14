@@ -18,7 +18,6 @@
         android:maxLines="8"
         android:scrollbars="vertical"
         android:text="Loading..."
-        android:textColorLink="?android:attr/windowBackgroundFallback"
         android:textSize="18sp"
         android:textStyle="bold" />
 

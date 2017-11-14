@@ -93,8 +93,13 @@ public class CPUManager {
             ex.printStackTrace();
             result = "0";
         }
-        int max_fre = Integer.parseInt(result.trim()) / 1024;
+
+        int max_fre = fixInt(result.trim()) / 1024;
         return max_fre;
+    }
+
+    int fixInt(String myString) {
+        return myString.isEmpty()?0:Integer.parseInt(myString);
     }
 
     /**
@@ -123,7 +128,7 @@ public class CPUManager {
             ex.printStackTrace();
             result = "-1";
         }
-        int min_fre = Integer.parseInt(result.trim()) / 1024;
+        int min_fre = fixInt(result.trim()) / 1024;
         return min_fre;
     }
 

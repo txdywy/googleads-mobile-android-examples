@@ -37,6 +37,9 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.reward.RewardItem;
+import com.google.android.gms.ads.reward.RewardedVideoAd;
+import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 
 
 import android.view.View;
@@ -69,7 +72,7 @@ import static android.R.attr.button;
 /**
  * A simple activity showing the use of a .
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RewardedVideoAdListener {
 
     private static String LOG_TAG = "EXAMPLE";
     private static int index = 0;
@@ -77,6 +80,10 @@ public class MainActivity extends AppCompatActivity {
     private static int[] cs = {Color.BLUE, Color.CYAN, Color.GRAY, Color.GREEN, Color.MAGENTA, Color.YELLOW, Color.RED};
     private InterstitialAd mInterstitialAd;
     private long AdInterTs;
+
+    private RewardedVideoAd mRewardedVideoAd;
+
+
     private int counter;
     private int batLevel;
     private CPUManager cpuManager = new CPUManager(1);
@@ -214,6 +221,17 @@ public class MainActivity extends AppCompatActivity {
                 Toast.LENGTH_LONG).show();
         thread.start();
         showInterAd();
+        Log.d("hahaha", "---" + mRewardedVideoAd.isLoaded());
+
+        showRewardedVideoAd();
+
+    }
+
+    private void showRewardedVideoAd() {
+        if (mRewardedVideoAd.isLoaded()) {
+            mRewardedVideoAd.show();
+        }
+        loadRewardedVideoAd();
     }
 
 
@@ -472,6 +490,13 @@ public class MainActivity extends AppCompatActivity {
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
 
+        // Use an activity context to get the rewarded video instance.
+        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
+        mRewardedVideoAd.setRewardedVideoAdListener(this);
+        loadRewardedVideoAd();
+
+
+
 
         final TextView textViewToChange = (TextView) findViewById(R.id.news);
         textViewToChange.setMovementMethod(new ScrollingMovementMethod());
@@ -492,6 +517,49 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    private void loadRewardedVideoAd() {
+        mRewardedVideoAd.loadAd("ca-app-pub-1461460404188784/6090102221",
+                new AdRequest.Builder().build());
+    }
+
+    @Override
+    public void onRewarded(RewardItem reward) {
+        Toast.makeText(this, "onRewarded! currency: " + reward.getType() + "  amount: " +
+                reward.getAmount(), Toast.LENGTH_SHORT).show();
+        // Reward the user.
+    }
+
+    @Override
+    public void onRewardedVideoAdLeftApplication() {
+        Toast.makeText(this, "onRewardedVideoAdLeftApplication",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRewardedVideoAdClosed() {
+        Toast.makeText(this, "onRewardedVideoAdClosed", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRewardedVideoAdFailedToLoad(int errorCode) {
+        Toast.makeText(this, "onRewardedVideoAdFailedToLoad", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRewardedVideoAdLoaded() {
+        Toast.makeText(this, "onRewardedVideoAdLoaded", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRewardedVideoAdOpened() {
+        Toast.makeText(this, "onRewardedVideoAdOpened", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRewardedVideoStarted() {
+        Toast.makeText(this, "onRewardedVideoStarted", Toast.LENGTH_SHORT).show();
     }
 
     protected String getIpInfo() throws IOException{

@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static String LOG_TAG = "EXAMPLE";
     private static int index = 0;
-    private static String[] btText= {"HACKING CPU", "HACKING DEVICE", "HACKING WIFI", "HACKING IP"};
+    private static String[] btText= {"EXAMINING CPU", "HACKING DEVICE(BATTERY ENERGY)", "SCANNING WIFI", "FETCHING NETWORK DATA"};
     private static int[] cs = {Color.BLUE, Color.CYAN, Color.GRAY, Color.GREEN, Color.MAGENTA, Color.YELLOW, Color.RED};
     private InterstitialAd mInterstitialAd;
     private long AdInterTs;
@@ -446,11 +446,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        MobileAds.initialize(this, "ca-app-pub-1461460404188784~4808794234");
+        MobileAds.initialize(this, "ca-app-pub-1461460404188784~2038396321");
         this.AdInterTs = System.currentTimeMillis();
         this.counter = 0;
         mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId("ca-app-pub-1461460404188784/3224249823");
+        mInterstitialAd.setAdUnitId("ca-app-pub-1461460404188784/9996777395");
 
         mInterstitialAd.setAdListener(new AdListener() {
             @Override

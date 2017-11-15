@@ -30,7 +30,7 @@
         android:layout_alignLeft="@+id/adView"
         android:layout_alignRight="@+id/adView"
         android:layout_alignStart="@+id/adView"
-        android:text="Refresh IP Info!"
+        android:text="SCANNING NETWORK..."
         android:textSize="30sp" />
 
     <com.google.android.gms.ads.AdView
@@ -41,6 +41,6 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         ads:adSize="MEDIUM_RECTANGLE"
-        ads:adUnitId="ca-app-pub-1461460404188784/9103262467">
+        ads:adUnitId="ca-app-pub-1461460404188784/8875267414">
     </com.google.android.gms.ads.AdView>
 </RelativeLayout>

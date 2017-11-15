@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "571238581837",
-    "firebase_url": "https://android-ip.firebaseio.com",
-    "project_id": "android-ip",
-    "storage_bucket": "android-ip.appspot.com"
+    "project_number": "474560872558",
+    "firebase_url": "https://android-detective-7dea5.firebaseio.com",
+    "project_id": "android-detective-7dea5",
+    "storage_bucket": "android-detective-7dea5.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:571238581837:android:8df2c1e8ce971342",
+        "mobilesdk_app_id": "1:474560872558:android:f785f46f74b31e0c",
         "android_client_info": {
-          "package_name": "com.ylab.ip"
+          "package_name": "com.ylab.conan"
         }
       },
       "oauth_client": [
         {
-          "client_id": "571238581837-49s4g02oahdlef7mobp5s9tdgp8qt333.apps.googleusercontent.com",
+          "client_id": "474560872558-ku3rfpscfu25nsg353u1n0c6qu8ujvmt.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCBNxnrNdXtfPUzVY_gLgj2dnis3Bo8NmQ"
+          "current_key": "AIzaSyCdxungzbn3wDM_gSmwsqU1YHm0FFq5Uic"
         }
       ],
       "services": {

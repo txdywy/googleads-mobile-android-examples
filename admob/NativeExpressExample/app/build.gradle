@@ -5,11 +5,11 @@ android {
     buildToolsVersion '26.0.2'
 
     defaultConfig {
-        applicationId "com.ylab.ip"
+        applicationId "com.ylab.conan"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 18
-        versionName "1.8"
+        versionCode 10
+        versionName "1.0"
     }
     buildTypes {
         release {
